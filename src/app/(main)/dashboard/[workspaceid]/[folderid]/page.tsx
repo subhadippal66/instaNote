@@ -6,10 +6,9 @@ import { v4 } from 'uuid';
 
 interface FolderPageProps {
     params : any;
-    folderData : any;
 }
 
-const FolderPage:React.FC<FolderPageProps> = async({params, folderData}) => {
+const FolderPage:React.FC<FolderPageProps> = async({params}) => {
 
     const folderId = params.folderid
     // const {data, error} = await getFolderData(folderId)
