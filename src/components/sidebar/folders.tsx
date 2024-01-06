@@ -261,6 +261,8 @@ const Folders: React.FC<FolderProps> = ({workspaceID}) => {
 
     useEffect(()=>{
         const getFilesOfId =async (folderId:string) => {
+
+            setIsloadingFiles(true)
             if(allFilesDataRedux[folderId]){
                 console.log("Already exist")
                 // console.log(allFiles)
@@ -278,6 +280,7 @@ const Folders: React.FC<FolderProps> = ({workspaceID}) => {
                 // console.log('---allFiles redux---')
                 // redux state
             }
+            setIsloadingFiles(false)
         }
 
         getFilesOfId(currFolderExp)
