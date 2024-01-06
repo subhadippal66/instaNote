@@ -1,0 +1,27 @@
+{
+  "version": "5",
+  "dialect": "pg",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "5",
+      "when": 1702971363014,
+      "tag": "0000_long_the_hand",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "5",
+      "when": 1702981415516,
+      "tag": "0001_powerful_sentinels",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "5",
+      "when": 1703250636939,
+      "tag": "0002_kind_mystique",
+      "breakpoints": true
+    }
+  ]
+}
