@@ -83,7 +83,7 @@ const WorkspaceDropdown: React.FC<WorkspaceDropdownProps> = ({privateWorkspaces,
   return (
     <>
       {/* <div>{selectedOption?.iconId}{selectedOption?.title}</div> */}
-      <div className='py-2 text-sm text-blue-400'>ALL WORKSPACES 🗄️</div>
+      <div className='py-2 text-sm text-blue-400'>ALL WORKSPACES</div>
       <Popover >
       <PopoverTrigger asChild>
         <Button

@@ -3,7 +3,7 @@ import { createServerComponentClient } from '@supabase/auth-helpers-nextjs';
 import React from 'react'
 import { validate } from 'uuid';
 import { cookies } from 'next/headers';
-import { getCollaboratingWorkspaces, getFolders, getPrivateWorkspaces, getSharedWorkspaces, getUserSubscriptionStatus } from '@/lib/supabase/queries';
+import { checkWorkspaceOwner, getCollaboratingWorkspaces, getFolders, getPrivateWorkspaces, getSharedWorkspaces, getUserSubscriptionStatus } from '@/lib/supabase/queries';
 import { redirect } from 'next/navigation';
 import { User } from '@/lib/supabase/supabase.types';
 
@@ -18,6 +18,11 @@ const Layout:React.FC<LayoutProps> = async({children, params}) => {
     const supabase = createServerComponentClient({cookies})
     const {data:{user}}:any = await supabase.auth.getUser();
 
+    // workspace check for the user
+    const ress = await checkWorkspaceOwner(params.workspaceid, user.id)
+    if(!ress){
+      redirect('/dashboard')
+    }
 
     // subscription status
     const {data:subscription,error:subscriptionError} = await getUserSubscriptionStatus(user.id);

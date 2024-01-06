@@ -22,6 +22,7 @@ import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '../ui/tooltip';
 import { useToast } from '../ui/use-toast';
 
+
 interface QuillEditorProps {
     dirType : 'File' | 'Folder';
     fileId : string;
@@ -268,7 +269,18 @@ const QuillEditor:React.FC<QuillEditorProps> = ({dirType, fileId, params,isShare
         }
 
         const data = await addSharedUserOnFile(data_toAddUser)
-        alert(data);
+        if(data=='success'){
+            toast({
+                title: 'user added 🎉',
+                description: `${email} is added.`,
+            });
+        }
+        else if(data=='user already added'){
+            toast({
+                title: 'user already added 🚀',
+                description: ``,
+            });
+        }
         setuserEmailForShare(null);
         // redux
         if(data=='success'){
@@ -302,6 +314,10 @@ const QuillEditor:React.FC<QuillEditorProps> = ({dirType, fileId, params,isShare
         }
         const response = await removeSharedUserQuery(id, currUserDataRedux.id);
         if(response == 'success'){
+            toast({
+                title: 'user removed 💔',
+                description: ``,
+            });
             let allU = JSON.parse(JSON.stringify(sharedUserOnFile))
             allU[fileId] = allU[fileId].filter((d:FileShared)=>d.id != id)
             // console.log(allU)
@@ -743,39 +759,58 @@ const QuillEditor:React.FC<QuillEditorProps> = ({dirType, fileId, params,isShare
                     <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12H12m-8.25 5.25h16.5" />
                 </svg>
             </div>
-            <div className= {!isSharedFile?'p-2 text-lg':'hidden'}>
+            <div className= {!isSharedFile?'p-2 text-base':'hidden'}>
                 {dirType == 'Folder' ? <div>{currIconIdWorkspace} {currTitleWorkspace} / {details.icon} {details.title}</div>:<></>}
                 {dirType == 'File' ? <div>{currIconIdWorkspace} {currTitleWorkspace} / {currFolderDetails?.iconId} {currFolderDetails?.title} / {details.icon} {details.title}</div> : <></>}
             </div>
             <div className={isSharedFile?'p-2 text-lg':'hidden'}>
                 {dirType == 'File' ? <div>{details.icon} {details.title}</div> : <></>}
             </div>
-            <div className={isSharedFile?'hidden':'flex'}>
-                <Button variant='outline' size='sm' onClick={()=>{editFileFolderName(dirType)}}>
+            <div className={isSharedFile?'hidden':'flex gap-x-2'}>
+
+                {/* WIP : Edit file/folder name */}
+
+                <div className='cursor-pointer hover:scale-125 transition-all' onClick={()=>{editFileFolderName(dirType)}}>
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" className="w-6 h-6">
                         <path stroke-linecap="round" stroke-linejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10" />
                     </svg>
-                </Button>
+                </div>
                 {
                     dirType=='File' && details.intrash=='' ?
-                    <Button variant='outline' size='sm' onClick={()=>{deleteFileFolder()}}>
-                        Delete
-                    </Button>:''
+                    <div className='cursor-pointer hover:scale-125 transition-all' onClick={()=>{deleteFileFolder()}}>
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" className="w-6 h-6">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0" />
+                        </svg>
+                    </div>:''
                 }
             </div>
         </div>
         <div className={`${ drawerState&&screenWidth<700 ?'hidden':
         'flex lg:flex-row flex-row-reverse justify-end p-2 items-center gap-2'}`} >
 
-            {(allChangesSaved) ? <div className='text-sm px-2'>Saved to Cloud ✅</div> : <div>Unsaved changes❗</div> }
+            {(allChangesSaved) ? <div className='text-sm px-1'>
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" className="w-6 h-6">
+                <path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5" />
+            </svg>
 
-            {isConnected ? '🟢' : '🔴'} 
+            </div> : <div className='animate-bounce'>
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" className="w-6 h-6">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5m-13.5-9L12 3m0 0 4.5 4.5M12 3v13.5" />
+                </svg>
+            </div> }
+
+            {/* <div className='pr-2'>
+                {isConnected ? '🟢' : '🔴'} 
+            </div> */}
 
             <div className={`${dirType!=='File' || isSharedFile ?'hidden':'flex'}`}>
                 
                 <Dialog>
                     <DialogTrigger asChild>
-                        <Button variant="outline" onClick={()=>{getAllUsersOnFile()}}>Manage collaborators 🫱🏽‍🫲🏻</Button>
+                        <Button variant="outline" className='mr-2' size={'sm'} onClick={()=>{getAllUsersOnFile()}}>collaborators  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-4 h-4">
+                            <path d="M4.5 6.375a4.125 4.125 0 1 1 8.25 0 4.125 4.125 0 0 1-8.25 0ZM14.25 8.625a3.375 3.375 0 1 1 6.75 0 3.375 3.375 0 0 1-6.75 0ZM1.5 19.125a7.125 7.125 0 0 1 14.25 0v.003l-.001.119a.75.75 0 0 1-.363.63 13.067 13.067 0 0 1-6.761 1.873c-2.472 0-4.786-.684-6.76-1.873a.75.75 0 0 1-.364-.63l-.001-.122ZM17.25 19.128l-.001.144a2.25 2.25 0 0 1-.233.96 10.088 10.088 0 0 0 5.06-1.01.75.75 0 0 0 .42-.643 4.875 4.875 0 0 0-6.957-4.611 8.586 8.586 0 0 1 1.71 5.157v.003Z" />
+                            </svg>
+                        </Button>
                     </DialogTrigger>
                     <DialogContent className="sm:max-w-[425px] gap-1">
                         <form onSubmit={handleSubmit(onSubmitAddUserForm)}>
@@ -917,16 +952,16 @@ const QuillEditor:React.FC<QuillEditorProps> = ({dirType, fileId, params,isShare
     </div>
 
 {/* Banner Upload section */}
-    <div 
-    onClick={()=>{uploadBanner()}}
-    className='h-[100px] cursor-pointer border-b-2 w-[100%] flex flex-row justify-center gap-4 items-center'>
+    {/* <div 
+        onClick={()=>{uploadBanner()}}
+        className='h-[100px] cursor-pointer border-b-2 w-[100%] flex flex-row justify-center gap-4 items-center'>
         <div className='opacity-60'>
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" className="w-6 h-6">
             <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5m-13.5-9L12 3m0 0 4.5 4.5M12 3v13.5" />
             </svg>
         </div>
         <div className='opacity-60'>Upload Banner</div>
-    </div>
+    </div> */}
 
 
     <div className={`
@@ -938,10 +973,14 @@ const QuillEditor:React.FC<QuillEditorProps> = ({dirType, fileId, params,isShare
         {/* {screenWidth} */}
 
         {/* File/Folder Name */}
-        <div className='max-w-[1100px] text-2xl opacity-60 py-2'>
-            {details.icon + ' ' + details.title}
+        <div className='flex justify-center items-center flex-col text-slate-900 
+            bg-gradient-to-r from-sky-500 to-indigo-500 w-full h-[80px]'>
+            <div className='max-w-[1100px] text-2xl opacity-100 py-2'>
+                {details.icon + ' ' + details.title}
+            </div>
+            <div className='opacity-90 text-sm pb-2'>{dirType.toUpperCase()}</div>
         </div>
-        <div className='opacity-60 text-sm pb-2'>{dirType.toUpperCase()}</div>
+
 
         {/* Text Editor */}
         <div 

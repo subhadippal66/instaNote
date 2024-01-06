@@ -124,7 +124,7 @@ const Folders: React.FC<FolderProps> = ({workspaceID}) => {
                     description: `${selectedEmojiFolder + " " + value.folderName} has been created successfully.`,
                 });
 
-                let allFolderArray = allFolders;
+                let allFolderArray = allfoldersDataRedux;
                 allFolderArray.unshift(newFolder);
                 setAllFolders(allFolderArray);
                 // reducer
@@ -187,24 +187,22 @@ const Folders: React.FC<FolderProps> = ({workspaceID}) => {
         async(value)=>{
 
 
-            // subscription check
-            // if(currUser?.subscription==null){
+            // subscription check and limit
+            if(currUser?.subscription==null){
 
-            //     const n = await getTotalNoOfFileQuery(value.hiddenFolderId)
-            //     console.log('subscription check files')
-            //     console.log(value.hiddenFolderId)
-            //     if(n){
-            //         console.log(n[0]?.value)
-            //         if(n[0]?.value>=5){
-            //             toast({
-            //                 title: 'Upgrade to pro ❗',
-            //                 description: `Cannot create more than 5 pages in a folder on free plan.`,
-            //             });
-            //             return; 
-            //         }
-            //     }
-            // }
-
+                const n = await getTotalNoOfFileQuery(workspaceID)
+                console.log('subscription check files')
+                if(n){
+                    // console.log(n[0]?.value)
+                    if(n[0]?.value>=50){
+                        toast({
+                            title: 'Upgrade to pro ❗',
+                            description: `Cannot create more than 50 pages in a workspace on free plan.`,
+                        });
+                        return; 
+                    }
+                }
+            }
 
             const fileID = v4();
 
@@ -326,7 +324,7 @@ return (
     <div className='pt-4 h-[10%]'>
     <Dialog>
         <DialogTrigger asChild>
-            <Button variant="outline">Create new folder ➕</Button>
+            <Button size={'sm'} variant="outline">Create new folder ➕</Button>
         </DialogTrigger>
         <DialogContent className="sm:max-w-[425px]">
             <form onSubmit={handleSubmit(onSubmit)}>
@@ -369,8 +367,8 @@ return (
     }
 
 
-    {inTrash ? <div className='text-sm text-red-400 pt-4'>TRASH 🗑️</div> :
-        <div className='text-sm text-blue-400 pt-4'>MY FOLDERS 🗃️</div>
+    {inTrash ? <div className='text-sm text-red-400 pt-4'>TRASH</div> :
+        <div className='text-sm text-blue-400 pt-4'>MY FOLDERS</div>
     }
 
 

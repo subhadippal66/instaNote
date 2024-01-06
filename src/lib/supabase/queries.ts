@@ -408,14 +408,14 @@ export const getTotalNoOfFolderQuery =async (WPid:string) => {
 }
 
 
-export const getTotalNoOfFileQuery =async (folderid:string) => {
-    if(!folderid) return null
+export const getTotalNoOfFileQuery =async (wID:string) => {
+    if(!wID) return null
 
     try{
         const res = await db
             .select({value:count()})
             .from(files)
-            .where(eq(files.folderId,folderid))
+            .where(eq(files.workspaceId,wID))
             // .groupBy(files.folderId)
         
         return res;
@@ -542,5 +542,27 @@ export const restoreFile =async (fileId:string, folderId:string|null) => {
         
     } catch (error) {
         return 'error';
+    }
+}
+
+
+export const checkWorkspaceOwner = async (wID:string, userID:string)=>{
+    if(!wID || !userID) return false;
+
+    try {
+        // console.log(']]]]]')
+
+        const res = await db
+        .select()
+        .from(workspaces)
+        .where(and( eq(workspaces.id, wID), eq(workspaces.workspaceOwner, userID))) as workspace[]
+
+        if(res.length>0){
+            return true
+        }
+        return false;
+        
+    } catch (error) {
+        return false;
     }
 }
