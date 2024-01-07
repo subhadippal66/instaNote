@@ -566,3 +566,29 @@ export const checkWorkspaceOwner = async (wID:string, userID:string)=>{
         return false;
     }
 }
+
+// delete files permanently
+export const deleteFileForever =async (fileId:string, workspaceId:string, userID:string ) => {
+
+    if(!fileId || !workspaceId || !userID) return 'error';
+
+    try {
+        // check workspace
+        const isValid = await checkWorkspaceOwner(workspaceId, userID);
+
+        if(isValid){
+            await db
+            .delete(files)
+            .where(and(eq(files.id, fileId),eq(files.workspaceId, workspaceId)))
+
+            return 'success';
+        }else{
+            return 'error'
+        }
+
+
+    } catch (error) {
+        return 'error'
+    }
+    
+}

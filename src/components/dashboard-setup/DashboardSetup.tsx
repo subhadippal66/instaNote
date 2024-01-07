@@ -175,8 +175,8 @@ const DashboardSetup:React.FC<DashboardSetupProps> = ({
         <CardHeader>
             <CardTitle>Create A Workspace</CardTitle>
             <CardDescription>
-                Lets create a private workspace to get you started.You can add
-                collaborators later from the workspace settings tab.
+                Lets create a workspace to get you started.You can add
+                collaborators later to a page in the workspace.
             </CardDescription>
         </CardHeader>
         <CardContent>
@@ -206,7 +206,9 @@ const DashboardSetup:React.FC<DashboardSetupProps> = ({
                             </small>
                         </div>
                     </div>
-                    <div>
+
+                    {/* workspace banner */}
+                    {/* <div>
                         <Label htmlFor='logo' className='text-sm text-muted-foreground'>
                             Workspace Logo
                         </Label>
@@ -234,13 +236,14 @@ const DashboardSetup:React.FC<DashboardSetupProps> = ({
                             To customize your workspace, you need to be on a Pro Plan
                             </small>
                         )}
-                    </div>
+                    </div> */}
 
                     <div className="self-end">
                         <Button
                             disabled={isLoading}
                             type="submit"
-                            
+                            size={'sm'}
+                            className='text-sm'
                         >
                             {!isLoading ? 'Create Workspace' : <Loader />}
                         </Button>

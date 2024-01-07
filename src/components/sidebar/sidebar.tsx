@@ -40,13 +40,13 @@ const Sidebar: React.FC<SidebarProps> = ({params, className, user,
   return (
     <aside
       className={twMerge(
-        ` border-r
-          ${!drawerState?'hidden':'flex flex-col w-[280px] shrink-0 p-4 gap-4 justify-between'}
+        ` border-r transition-[width] duration-300
+          ${!drawerState?'w-0':'flex flex-col w-[280px] shrink-0 p-4 gap-4 justify-between'}
         `,
         className
       )}
     >
-      <div>
+      <div className={drawerState?'':'hidden'}>
           <WorkspaceDropdown 
             privateWorkspaces={privateWorkspaces}
             sharedWorkspaces={sharedWorkspaces}
@@ -70,7 +70,7 @@ const Sidebar: React.FC<SidebarProps> = ({params, className, user,
           
 
       </div>
-      <div>
+      <div className={drawerState?'':'hidden'}>
         <div className='pt-2'>Made with ♥️ in India</div>
         <UserProfile></UserProfile>
       </div>

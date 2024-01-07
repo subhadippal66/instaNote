@@ -50,7 +50,7 @@ const WorkspacePage:React.FC<WorkspacePageProms> = ({params}) => {
 
   return (
     <>
-    <div className='text-center py-4'>Click on a Folder or File to edit ✏️</div>
+    <div className='text-center pt-10 px-4 text-xs'>Click on a Folder or File to edit ✏️</div>
     </>
   )
 }

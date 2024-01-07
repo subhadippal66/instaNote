@@ -5,7 +5,7 @@ import { Button } from '../ui/button';
 import { useAppSelector } from '@/redux/store';
 import { File, FileShared, Folder } from '@/lib/supabase/supabase.types';
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
-import { setIsDrawerOpenRedux, setScreenWidthRedux } from '@/redux/userSlice';
+import { ISDRAWEROPEN, setIsDrawerOpenRedux, setScreenWidthRedux } from '@/redux/userSlice';
 import { useDispatch } from 'react-redux';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '../ui/dialog';
 import { Label } from '../ui/label';
@@ -13,7 +13,7 @@ import { Input } from '../ui/input';
 import { useForm,SubmitHandler } from 'react-hook-form';
 import { ShareUserOnFileSchema } from '@/lib/types';
 import { string, z } from 'zod';
-import { addSharedUserOnFile, deleteFileTemp, getAllUsersOnFileQuery, getFileData, getFiles, getFolderData, getFolders, getSharedFilesOfUser, getSharedUser, removeSharedUserQuery, restoreFile, saveFileData, saveFolderData } from '@/lib/supabase/queries';
+import { addSharedUserOnFile, deleteFileForever, deleteFileTemp, getAllUsersOnFileQuery, getFileData, getFiles, getFolderData, getFolders, getSharedFilesOfUser, getSharedUser, removeSharedUserQuery, restoreFile, saveFileData, saveFolderData } from '@/lib/supabase/queries';
 import { setAllDeletedFiles, setAllFilesReducer, setAllSharedFiles, setIsLoadingReducer, setSharedUserOnFileReducer } from '@/redux/folderSlice';
 import { v4 } from 'uuid';
 import { useRouter } from 'next/navigation';
@@ -350,11 +350,17 @@ const QuillEditor:React.FC<QuillEditorProps> = ({dirType, fileId, params,isShare
                         // WIP: get file owner email from user table
                         console.log('aa gye idhar');
                     }else{
+                        dispatch(setIsLoadingReducer(false))
                         return router.replace(`/dashboard/${params.workspaceid}`)
                     }
                 }
 
                 const {data:selectedDir, error} = await getFileData(fileId);
+
+                if(selectedDir[0]?.id == undefined){
+                    dispatch(setIsLoadingReducer(false))
+                    return router.replace(`/dashboard/${workspaceid}`)
+                }
                 try{
                     quill?.setContents(JSON.parse(selectedDir[0].data || ''))
                 }catch(e){}
@@ -716,6 +722,37 @@ const QuillEditor:React.FC<QuillEditorProps> = ({dirType, fileId, params,isShare
 
 
 
+    const deleteFileForeverFN =async () => {
+        if(dirType=='File'){
+
+            const ffff = fileId
+
+            const res = await deleteFileForever(ffff, details.workspaceId, currUserDataRedux.id)
+
+            if(res=='success'){
+
+                let dd:File[] = []
+                alllDelFiles.map((d:File)=>{
+                    if(d.id !== ffff){
+                        dd.push(d)
+                    }else{
+                    }
+                })
+                dispatch(setAllDeletedFiles(dd))
+
+                toast({
+                    title:'Deleted forever ❗'
+                })
+
+                return router.replace(`/dashboard/${workspaceid}`);
+            }else{
+                toast({
+                    title:'Something went wrong.'
+                })
+            }
+        }
+    }
+
 
   return (
     <>
@@ -732,21 +769,24 @@ const QuillEditor:React.FC<QuillEditorProps> = ({dirType, fileId, params,isShare
         </div>
     </div>
     <div className={`${drawerState&&screenWidth<700?'opacity-30':'opacity-100'}`}>
-    {details.intrash=='1'?<>
-        <article className='
-            bg-red-400 flex flex-row py-2 w-full
-            justify-center items-center text-white gap-4'
-        >
-            <div className=''>This {dirType} is in Trash.</div>
-            {
-            isSharedFile ? <></> :
-            <div className=''>
-                <Button onClick={()=>{restoreFileFolder()}} className='bg-transparent py-0 px-2 mx-2' type='button' variant={'outline'}>Restore</Button>
-                <Button className='bg-transparent py-0 px-2 mx-2' type='button' variant={'outline'}>Delete</Button>
-            </div>
-            }
-        </article>
-    </>:<></>}
+        {details.intrash=='1'?<>
+            <article className='
+                bg-red-400 flex flex-row py-2 w-full
+                justify-center items-center text-white gap-4'
+            >
+                <div className=''>This {dirType} is in Trash.</div>
+                {
+                isSharedFile ? <></> :
+                <div className=''>
+                    <Button onClick={()=>{restoreFileFolder()}} className='bg-transparent py-0 px-2 mx-2' type='button' variant={'outline'}>Restore</Button>
+                    <Button 
+                        onClick={()=>{confirm('do you want to delete this file Forever ❓ This action cannot be undone ❗')&&deleteFileForeverFN()}}
+                        className='bg-transparent py-0 px-2 mx-2' type='button' variant={'outline'}>Delete
+                    </Button>
+                </div>
+                }
+            </article>
+        </>:<></>}
 
 
     <div className='flex flex-col-reverse lg:flex-row justify-between p-2 w-[100%] sticky top-0 bg-background z-40'>
@@ -759,6 +799,7 @@ const QuillEditor:React.FC<QuillEditorProps> = ({dirType, fileId, params,isShare
                     <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12H12m-8.25 5.25h16.5" />
                 </svg>
             </div>
+            {/* file location */}
             <div className= {!isSharedFile?'p-2 text-base':'hidden'}>
                 {dirType == 'Folder' ? <div>{currIconIdWorkspace} {currTitleWorkspace} / {details.icon} {details.title}</div>:<></>}
                 {dirType == 'File' ? <div>{currIconIdWorkspace} {currTitleWorkspace} / {currFolderDetails?.iconId} {currFolderDetails?.title} / {details.icon} {details.title}</div> : <></>}
@@ -893,7 +934,7 @@ const QuillEditor:React.FC<QuillEditorProps> = ({dirType, fileId, params,isShare
                 </div> */}
 
 
-            <div className='flex flex-row'>
+            <div className='flex flex-row w-10 h-8'>
                 {/* {sharedUserOnFile[fileId]?.length>0  ?
                 <>
                     <Avatar className={ `bg-amber-900 translate-x-4 z-40`}>

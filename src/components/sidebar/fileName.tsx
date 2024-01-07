@@ -15,7 +15,7 @@ const FileName:React.FC<FileNameProps> = ({title,logo,workspaceId,fileId,folderI
     const router = useRouter();
 
   return (
-    <div>
+    <div className='hover:bg-slate-700 transition-all'>
         <div
         className='cursor-pointer'
         onClick={()=>{router.replace(`/dashboard/${workspaceId}/${folderId}/${fileId}`)}}>

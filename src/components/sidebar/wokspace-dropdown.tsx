@@ -90,7 +90,8 @@ const WorkspaceDropdown: React.FC<WorkspaceDropdownProps> = ({privateWorkspaces,
           variant="outline"
           role="combobox"
           // aria-expanded={open}
-          className="w-[200px] justify-between"
+          className="w-[240px] justify-between"
+          size={'sm'}
         >
           {value}
           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-100" />
@@ -118,7 +119,7 @@ const WorkspaceDropdown: React.FC<WorkspaceDropdownProps> = ({privateWorkspaces,
 
               <Dialog>
                 <DialogTrigger asChild>
-                  <Button variant="outline" className='m-2'>➕ New Workspaces</Button>
+                  <Button variant="outline" size={'sm'} className='m-2'>➕ New Workspaces</Button>
                 </DialogTrigger>
                 <DialogContent className="w-full bg-transparent border-none p-0 bg-none">
                   <DashboardSetup user={user} subscription={subscription} />

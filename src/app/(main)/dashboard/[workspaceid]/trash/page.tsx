@@ -11,7 +11,7 @@ const Trash = () => {
     dispatch(setInTrashStateReducer(true))
 
   return (
-    <div className='p-4 gap-4 flex flex-col justify-center items-center'>
+    <div className='pt-10 px-4 text-xs gap-4 flex flex-col justify-center items-center'>
         <div>
             All Files/Folders in Trash will be deleted after 30 days.
         </div>

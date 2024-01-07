@@ -73,7 +73,7 @@ const CreateFile:React.FC<CreateFileProps> = ({
         </div>
         <DialogFooter>
           <DialogClose asChild>
-            <Button type="submit" variant="outline" disabled={isLoadingFiles}>
+            <Button type="submit" variant="outline" size={'sm'} disabled={isLoadingFiles}>
               {!isLoadingFiles ? "Create Page 📄" : <Loader />}
             </Button>
           </DialogClose>

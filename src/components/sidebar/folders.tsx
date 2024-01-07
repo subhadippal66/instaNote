@@ -327,7 +327,7 @@ return (
     <div className='pt-4 h-[10%]'>
     <Dialog>
         <DialogTrigger asChild>
-            <Button size={'sm'} variant="outline">Create new folder ➕</Button>
+            <Button size={'sm'} className='py-0' variant="outline">Create new folder ➕</Button>
         </DialogTrigger>
         <DialogContent className="sm:max-w-[425px]">
             <form onSubmit={handleSubmit(onSubmit)}>
@@ -360,7 +360,7 @@ return (
                 </div>
                 <DialogFooter>
                     <DialogClose asChild>
-                    <Button type="submit" disabled={isloading}>{!isLoading ? 'Create Folder 📁' : <Loader />}</Button>
+                    <Button type="submit" className='text-sm' size={'sm'} disabled={isloading}>{!isLoading ? 'Create Folder 📁' : <Loader />}</Button>
                     </DialogClose>
                 </DialogFooter>
             </form>
@@ -375,7 +375,7 @@ return (
     }
 
 
-    <div className='pt-4 '>
+    <div className='pt-4'>
         <Accordion type="multiple" className="w-full">
             {/* defaultValue is Value of AccordionItem */}
         <ScrollArea className='h-[30vh] px-2'>
@@ -396,29 +396,42 @@ return (
             
             return (<>
                 <AccordionItem className='border-none' value={folderdata?.id}>
-                    <div className='flex flex-row justify-between'>
-                        <div>
-                            <AccordionTrigger
-                                className='flex flex-row justify-between py-1 px-0 data-[state=open]:hidden'
-                                onClick={()=> gotoFolder(folderdata?.id)}>
+                    <div className='flex flex-row  hover:bg-slate-700 transition-all cursor-pointer'
+                        
+                    >
+                        <div className='no-underline  flex flex-row justify-between py-1 px-0 w-full text-left' 
+                            onClick={()=> gotoFolder(folderdata?.id)}
+                        >
+                            {/* <AccordionTrigger
+                                className='flex flex-row justify-between py-1 px-0 no-underline data-[state=open]:hidden'
+                                // onClick={()=> gotoFolder(folderdata?.id)}
+                                > */}
                                     {folderdata?.iconId} {folderdata?.title}
-                            </AccordionTrigger>
+                            {/* </AccordionTrigger>
                             <AccordionHeader
-                                className='flex flex-row justify-between py-1 px-0 cursor-pointer hover:underline data-[state=closed]:hidden'
-                                onClick={()=> gotoFolder(folderdata?.id)}>
+                                className='flex flex-row justify-between py-1 px-0 no-underline data-[state=closed]:hidden'
+                                // onClick={()=> gotoFolder(folderdata?.id)}
+                                >
                                     {folderdata?.iconId} {folderdata?.title}
-                            </AccordionHeader>
+                            </AccordionHeader> */}
                         </div>
-                        <div className='px-2'>
+                        <div className='px-2 flex items-center justify-center'>
                             <AccordionTrigger 
                                 onClick={()=> setCurrFolderExp(folderdata?.id)} 
                                 className='py-1 px-0 data-[state=open]:hidden'
-                            >+
+                            >
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" className="w-4 h-4">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
+                                </svg>
                             </AccordionTrigger>
                             <AccordionTrigger
                                 onClick={()=> setCurrFolderExp(folderdata?.id)} 
                                 className='py-1 px-0 data-[state=closed]:hidden'
-                            >-
+                            >
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" className="w-4 h-4">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
+                                </svg>
+
                             </AccordionTrigger>
                         </div>
                     </div>
@@ -428,7 +441,7 @@ return (
                         {inTrash ? <></> : 
                         <Dialog>
                             <DialogTrigger asChild>
-                                <Button className='px-1 py-4 mt-0 h-0 text-cyan-300' variant="link">New page +</Button>
+                                <Button className='px-2 py-3 mt-0 h-0 text-cyan-300 transition-all' variant="ghost">New page +</Button>
                             </DialogTrigger>
                             <DialogContent className="sm:max-w-[425px]">
                                 <CreateFile
@@ -513,6 +526,8 @@ return (
         </ScrollArea>
         </Accordion>
 
+
+        <div className='shadow shadow-gray-600 w-full h-[1px]'></div>
     </div>
 
     
