@@ -7,7 +7,7 @@ import {DM_Sans} from 'next/font/google'
 import { twMerge } from 'tailwind-merge'
 import { Toaster } from '@/components/ui/toaster'
 import { StateProvider } from '@/redux/StateProvider'
-import { SocketProvider } from '@/lib/providers/socket-provider'
+// import { SocketProvider } from '@/lib/providers/socket-provider'
 
 const inter = DM_Sans({ subsets: ['latin'] })
 
@@ -28,9 +28,9 @@ export default function RootLayout({
         <ThemeProvider attribute='class' defaultTheme='dark' enableSystem>
           <Toaster />
           <StateProvider>
-            <SocketProvider>
+            {/* <SocketProvider> */}
               {children}
-            </SocketProvider>
+            {/* </SocketProvider> */}
           </StateProvider>
         </ThemeProvider>
       </body>
