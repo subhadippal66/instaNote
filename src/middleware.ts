@@ -12,6 +12,12 @@ export async function middleware(req: NextRequest){
             return NextResponse.redirect(new URL('/login', req.url));
         }
     }
+    // reset
+    if(req.nextUrl.pathname.startsWith('/newPassword')){
+        if(!session){
+            return NextResponse.redirect(new URL('/login', req.url));
+        }
+    }
 
     const emailLinkError = "Email link is invalid or has expired"
 

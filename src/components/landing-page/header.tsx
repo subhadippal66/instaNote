@@ -69,7 +69,7 @@ const Header = () => {
       >
         <Image
           src={Logo}
-          alt="Cypress Logo"
+          alt="Instanote Logo"
           width={25}
           height={25}
         />
@@ -78,10 +78,12 @@ const Header = () => {
           dark:text-white
         "
         >
-          cypress.
+          instaNote
         </span>
       </Link>
-      <NavigationMenu className="hidden md:block">
+
+
+      {/* <NavigationMenu className="hidden md:block">
         <NavigationMenuList className="gap-6">
           <NavigationMenuItem>
             <NavigationMenuTrigger
@@ -208,7 +210,9 @@ const Header = () => {
             </NavigationMenuLink>
           </NavigationMenuItem>
         </NavigationMenuList>
-      </NavigationMenu>
+      </NavigationMenu> */}
+
+
       <aside
         className="flex
         w-full

@@ -7,10 +7,27 @@ export const FormSchema = z.object({email:z.string().describe("Email").email({me
     password:z.string().describe("Password").min(1, "Password is required")
 })
 
+export const FormSchemaEmail = z.object({
+   email:z.string().describe("Email").email({message:"Invalid Email"})
+})
+
+export const FormSchemaNewPassword = z.object({
+   password: z.string().describe("Password").min(1, "Password is required"),
+   confirmPassword: z.string().describe("Confirm password").min(1, "Password is required")
+}).superRefine(({ confirmPassword, password }, ctx) => {
+   if (confirmPassword !== password) {
+     ctx.addIssue({
+       code: "custom",
+       message: "The passwords did not match"
+     });
+   }
+ });
+
 export const CreateWorkspaceFormSchema = z.object({
    workspaceName: z.string().describe('Workspace Name').min(1,'Workspace name must be minimum of 1 character.'),
    logo: z.any(),
 })
+
 
 export const CreateFolderFormSchema = z.object({
    folderName: z.string().describe('Workspace Name').min(1,'Workspace name must be minimum of 1 character.'),

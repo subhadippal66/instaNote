@@ -1,7 +1,7 @@
 "use server"
 
 import { z } from "zod";
-import { FormSchema } from "../types";
+import { FormSchema, FormSchemaEmail, FormSchemaNewPassword } from "../types";
 import {createRouteHandlerClient} from '@supabase/auth-helpers-nextjs'
 import { cookies } from "next/headers";
 
@@ -35,3 +35,33 @@ export async function actionSignUpUser({
     });
     return response;
   }
+
+export async function actionResetPassword({email}:z.infer<typeof FormSchemaEmail>){
+  const supabase = createRouteHandlerClient({ cookies });
+  const res = await supabase.auth.resetPasswordForEmail(email, {
+    redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL}api/auth/callback?type=recovery`,
+  })
+
+  if(res.data){
+    return {data:'success', error:null}
+  }
+  return {data:null, error:'error'};
+}
+
+export async function actionNewPassword({password, confirmPassword}:z.infer<typeof FormSchemaNewPassword>){
+  const supabase = createRouteHandlerClient({ cookies });
+  
+  if(password !== confirmPassword){
+    return {data:null, error:'error'};
+  }
+
+  // need to WORK here
+  const res = await supabase.auth.updateUser({
+    password: password
+  })
+  console.log(res)
+  if(res.data.user){
+    return {data:'success', error:null}
+  }
+  return {data:null, error:'error'};
+}

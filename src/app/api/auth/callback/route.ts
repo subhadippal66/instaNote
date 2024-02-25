@@ -8,9 +8,21 @@ export async function GET(req:NextRequest){
 
     if(code){
         console.log('kkk')
-        const supabase = createRouteHandlerClient({cookies})
-        await supabase.auth.exchangeCodeForSession(code)
+        try{
+            const supabase = createRouteHandlerClient({cookies})
+            await supabase.auth.exchangeCodeForSession(code)
+        }catch(e){
+            console.log(e)
+        }
     }
+
+    // reset password
+    const type = requestUrl.searchParams.get('type');
+    if(type == 'recovery'){
+        return NextResponse.redirect(`${requestUrl.origin}/newPassword`)
+    }
+
+    // const type = requestUrl.searchParams.get('')
 
     return NextResponse.redirect(`${requestUrl.origin}/dashboard`)
 }

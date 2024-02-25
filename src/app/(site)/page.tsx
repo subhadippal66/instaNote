@@ -13,27 +13,49 @@ import clsx from 'clsx'
 import CustomCard from '@/components/landing-page/custom-card'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { CardContent, CardDescription, CardTitle } from '@/components/ui/card'
+import Link from 'next/link'
 
 const HomePage = () => {
+
   return (
     <>
     <section className='overflow-hidden px-4 sm:px-6 mt-10 sm:flex sm:flex-col gap-4 md:justify-center md:items-center'>
             <TitleSection 
-                pill='✨ Your Workspace, Perfected' 
-                title='All-In-One collaboration and Productive Platform'
+                pill='✨ Your ultimate note taking app' 
+                title='Collaborative and Productive Platform'
             />
             
             <div
                 className='bg-white p-[2px] mt-6 rounded-xl bg-gradient-to-r from-primary to-brand-primaryBlue
-                sm:w-[300px]'
+                sm:w-[300px] z-20'
             >
-                <Button variant="btn-primary" className='w-full rounded-[10px] p-6 text-2xl bg-background'>
-                    Get InstaNote Now
-                </Button>
+
+                <div
+                  className="w-[30%]
+                  blur-[120px]
+                  rounded-full
+                  h-32
+                  absolute
+                  bg-brand-primaryPurple/50
+                  -z-10
+                  top-22
+                  "
+                />
+
+                <Link href='/dashboard'>
+                  <Button variant="btn-primary" className='w-full rounded-[10px] p-6 text-2xl bg-background'>
+                      use InstaNote Now
+                  </Button>
+                </Link>
             </div>
-            <div className='md:mt-[-90px] 
-                sm:w-full w-[750px] flex justify-center items-center mt-[-40px] relative sm:ml-0 ml-[-50px]'>
-                <Image src={AppBanner} alt='Application Banner'/>
+            <div className='md:mt-[25px] 
+                sm:w-full flex justify-center items-center mt-[35px] relative sm:ml-0 ml-[-50px]
+                rounded-xl
+                border-4
+                border-washed-purple-300 
+                border-opacity-10  
+              '>
+                <Image src={AppBanner} className='rounded-2xl' alt='Application Banner'/>
                 <div
                     className="bottom-0
                     top-[50%]
@@ -42,7 +64,7 @@ const HomePage = () => {
                     left-0
                     right-0
                     absolute
-                    z-10
+                    z-0
                     "
                 ></div>
             </div>
@@ -50,7 +72,7 @@ const HomePage = () => {
 
 
 
-    <section className="relative">
+    {/* <section className="relative">
         <div
           className="overflow-hidden
           flex
@@ -109,7 +131,7 @@ const HomePage = () => {
             </div>
           ))}
         </div>
-    </section>           
+    </section>            */}
     
     
     <section
@@ -120,6 +142,7 @@ const HomePage = () => {
         items-center
         flex-col
         relative
+        mt-12
       "
       >
         <div
@@ -134,7 +157,7 @@ const HomePage = () => {
         "
         />
         <TitleSection
-          title="Keep track of your meetings all in one place"
+          title="Add multiple collaborators"
           subheading="Capture your ideas, thoughts, and meeting notes in a structured and organized manner."
           pill="Features"
         />
@@ -187,9 +210,9 @@ const HomePage = () => {
             title="Trusted by all"
             subheading="Join thousands of satisfied users who rely on our platform for their 
             personal and professional productivity needs."
-            pill="Testimonials"
+            pill="🎉"
           />
-          {[...Array(2)].map((arr, index) => (
+          {/* {[...Array(2)].map((arr, index) => (
             <div
               key={randomUUID()}
               className={twMerge(
@@ -240,7 +263,7 @@ const HomePage = () => {
                 ></CustomCard>
               ))}
             </div>
-          ))}
+          ))} */}
         </div>
     </section>
 
@@ -286,14 +309,14 @@ const HomePage = () => {
                 >
                   {card.planType === PRICING_PLANS.proplan && (
                     <>
-                      <div
+                      {/* <div
                         className="hidden dark:block w-full blur-[120px] rounded-full h-32
                         absolute
                         bg-brand-primaryPurple/80
                         -z-10
                         top-0
                       "
-                      />
+                      /> */}
                       <Image
                         src={Diamond}
                         alt="Pro Plan Icon"
@@ -323,43 +346,44 @@ const HomePage = () => {
                   <p className="dark:text-washed-purple-800">
                     {card.description}
                   </p>
+                  <Link href={'/login'}>
                   <Button
                     variant="default"
                     className="whitespace-nowrap w-full mt-4"
                   >
                     {card.planType === PRICING_PLANS.proplan
-                      ? 'Go Pro'
+                      ? 'Coming soon ....'
                       : 'Get Started'}
-                  </Button>
+                  </Button></Link>
                 </CardContent>
               }
-              cardFooter={
-                <ul
-                  className="font-normal
-                  flex
-                  mb-2
-                  flex-col
-                  gap-4
-                "
-                >
-                  <small>{card.highlightFeature}</small>
-                  {card.freatures.map((feature) => (
-                    <li
-                      key={feature}
-                      className="flex
-                      items-center
-                      gap-2
-                    "
-                    >
-                      <Image
-                        src={CheckIcon}
-                        alt="Check Icon"
-                      />
-                      {feature}
-                    </li>
-                  ))}
-                </ul>
-              }
+              // cardFooter={
+              //   <ul
+              //     className="font-normal
+              //     flex
+              //     mb-2
+              //     flex-col
+              //     gap-4
+              //   "
+              //   >
+              //     <small>{card.highlightFeature}</small>
+              //     {card.freatures.map((feature) => (
+              //       <li
+              //         key={feature}
+              //         className="flex
+              //         items-center
+              //         gap-2
+              //       "
+              //       >
+              //         <Image
+              //           src={CheckIcon}
+              //           alt="Check Icon"
+              //         />
+              //         {feature}
+              //       </li>
+              //     ))}
+              //   </ul>
+              // }
             />
           ))}
         </div>

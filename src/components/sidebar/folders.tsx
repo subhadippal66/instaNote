@@ -155,13 +155,15 @@ const Folders: React.FC<FolderProps> = ({workspaceID}) => {
 
             dispatch(setIsLoadingReducer(true))
 
-            const {data:dataFolder,error:errorFolder} = await getFolders(workspaceID , inTrash);
-
-            setAllFolders(dataFolder);
-
-            // reducer
-            dispatch(setIsLoadingReducer(false))
-            dispatch(setAllFoldersReducer(dataFolder))
+            try{
+                const {data:dataFolder,error:errorFolder} = await getFolders(workspaceID , inTrash);
+                setAllFolders(dataFolder);
+                // reducer
+                dispatch(setIsLoadingReducer(false))
+                dispatch(setAllFoldersReducer(dataFolder))
+            }catch(e){
+                alert('something went wrong, Please refresh the page.')
+            }
 
             // console.log(dataFolder)
             

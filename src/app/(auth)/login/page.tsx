@@ -92,6 +92,11 @@ const LoginPage = () => {
         </Button>
 
         <span className='self-center'>
+          Forget password ? 
+          <Link href='/reset' className='text-primary'> reset</Link>
+        </span>
+
+        <span className='self-center'>
           Dont have an account 
           <Link href='/signup' className='text-primary'> Sign Up</Link>
         </span>
