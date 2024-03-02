@@ -29,11 +29,13 @@ const DashboardPage = async() => {
 
   if(subscriptionError) return;
 
-  if(!workspace) return (<div className='bg-background h-screen w-screen
-    flex justify-center items-center
-  '>
-    <DashboardSetup user={user} subscription={subscription}></DashboardSetup>
-  </div>);
+  if(!workspace) return (
+    <div className='bg-background h-screen w-screen
+      flex justify-center items-center
+    '>
+      <DashboardSetup user={user} subscription={subscription}></DashboardSetup>
+    </div>
+  );
 
 
 

@@ -21,6 +21,8 @@ import { useRouter } from 'next/navigation';
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '../ui/tooltip';
 import { useToast } from '../ui/use-toast';
+import firestore from '../../lib/firebase/main'
+import { collection, addDoc, setDoc, doc, onSnapshot } from "firebase/firestore"; 
 
 
 interface QuillEditorProps {
@@ -128,6 +130,15 @@ const QuillEditor:React.FC<QuillEditorProps> = ({dirType, fileId, params,isShare
     //     }
     // }, [folderid])
 
+
+    // firebase firestore
+    // useEffect(()=>{
+    //     if(dirType === 'File'){
+    //         let col = firestore.collection(fileId);
+    //     }
+    // }, [dirType, fileId])
+
+
     // to store current data
     const [details, setDetails] = useState({
         title:'',
@@ -162,7 +173,7 @@ const QuillEditor:React.FC<QuillEditorProps> = ({dirType, fileId, params,isShare
             Quill.register('modules/cursors', QuillCursors);
 
             const q = new Quill(editor,{
-                readOnly: isSharedFile,  // READONLY FOR SHARED FILE 
+                // readOnly: isSharedFile,  // READONLY FOR SHARED FILE 
                 theme:'snow',
                 modules:{
                     toolbar: TOOLBAR_OPTIONS,
@@ -294,6 +305,8 @@ const QuillEditor:React.FC<QuillEditorProps> = ({dirType, fileId, params,isShare
             }
             // console.log(allU)
             dispatch((setSharedUserOnFileReducer(allU)))
+            // console.log(sharedUserOnFile)
+            await getAllUsersOnFile()
         }
     }
 
@@ -324,6 +337,8 @@ const QuillEditor:React.FC<QuillEditorProps> = ({dirType, fileId, params,isShare
             allU[fileId] = allU[fileId].filter((d:FileShared)=>d.id != id)
             // console.log(allU)
             dispatch((setSharedUserOnFileReducer(allU)))
+            // console.log(sharedUserOnFile)
+            await getAllUsersOnFile()
         }
     }
     // share file ends
@@ -425,7 +440,6 @@ const QuillEditor:React.FC<QuillEditorProps> = ({dirType, fileId, params,isShare
         // }
 
         
-        console.log('socket needed')
         // socket.emit('create-room', fileId);
         
 
@@ -463,11 +477,28 @@ const QuillEditor:React.FC<QuillEditorProps> = ({dirType, fileId, params,isShare
 
         // WIP : curser selection state
         const selectionChangeHandler = (cursorId:string)=>{
-            return (range:any, oldRange:any, source:any)=>{
+            return async(range:any, oldRange:any, source:any)=>{
                 if(source==='user' && cursorId && dirType=='File' && sharedUserOnFile && sharedUserOnFile[fileId]?.length>0){
                     // console.log(sharedUserOnFile[fileId])
                     // console.log('cursor data emitting')
                     // socket.emit('send-cursor-move', range, fileId, cursorId);
+
+                    try {
+                        const gg = async()=>{
+                            // firebase cursor add state
+                            await setDoc(doc(firestore, fileId, 'cursor'), {
+                                range: JSON.stringify(range),
+                                cursorId: JSON.stringify(cursorId),
+                            })
+                            // console.log("Document written");
+                        }
+                        // console.log(sharedUserOnFile[fileId]?.length)
+                        if(sharedUserOnFile[fileId]?.length){
+                            gg()
+                        }
+                    } catch (e) {
+                        console.error("Error adding document: ", e);
+                    }
                 }
             }
         };
@@ -509,6 +540,22 @@ const QuillEditor:React.FC<QuillEditorProps> = ({dirType, fileId, params,isShare
             // fix : check condition for sharing -> Sol - All folder/files shares because an user can open same file/folder in different tabs.
             // console.log('socket send text change data')
             // socket.emit('send-changes', delta, fileId)
+            try {
+                // firebase doc change add state
+                const gg = async()=>{
+                    await setDoc(doc(firestore, fileId, 'delta'), {
+                        delta: JSON.stringify(delta),
+                        user: currUserDataRedux.id
+                    })
+                    console.log("Document written");
+                    console.log(delta);
+                }
+                if(sharedUserOnFile[fileId]?.length){
+                    gg()
+                }
+            } catch (e) {
+                console.error("Error adding document: ", e);
+            }
         }
 
         quill.on('text-change', quillHandler);
@@ -530,11 +577,10 @@ const QuillEditor:React.FC<QuillEditorProps> = ({dirType, fileId, params,isShare
     // receive cursor state change socket
     useEffect(()=>{
         if(quill===null || socket===null || !fileId || dirType!='File' || !sharedUserOnFile[fileId]?.length) return;
-        console.log('----+++---')
         // console.log(sharedUserOnFile[fileId]?.length)
 
         const socketHandlerCursorReceive = (range:any, roomId:string, cursorId:string)=>{
-            console.log('cursor receiving')
+            // console.log('cursor receiving')
             if(roomId === fileId){
                 const cursorToMove = localCursors.find((c:any)=>c.cursors()?.[0].id === cursorId);
                 if(cursorToMove){
@@ -543,6 +589,18 @@ const QuillEditor:React.FC<QuillEditorProps> = ({dirType, fileId, params,isShare
                     // }catch(e){}
                 }
             }
+        }
+
+        // firebase receive cursor change
+        if(sharedUserOnFile[fileId]?.length){
+            onSnapshot(doc(firestore, fileId, "cursor"), (doc) => {
+                if(doc.data()?.range && doc.data()?.cursorId){
+                    socketHandlerCursorReceive(
+                        JSON.parse(doc.data()?.range),  fileId, 
+                        JSON.parse(doc.data()?.cursorId)
+                    )
+                }
+            });
         }
 
         // socket.on('receive-cursor-move', socketHandlerCursorReceive)
@@ -569,13 +627,23 @@ const QuillEditor:React.FC<QuillEditorProps> = ({dirType, fileId, params,isShare
         // socket
         // socket?.on('receive-changes', socketHandler)
 
+        // Firebase firestore : Doc change receiving
+        if(sharedUserOnFile[fileId]?.length){
+            onSnapshot(doc(firestore, fileId, "delta"), (doc) => {
+                if(doc.data()?.user !== currUserDataRedux.id && doc.data()?.delta){
+                    socketHandler(JSON.parse(doc.data()?.delta), fileId);
+                }
+                // console.log(doc.data())
+            });
+        }
+
         return ()=>{
             // socket
             // console.log('off')
             // socket.off('receive-changes', socketHandler)
         }
 
-    },[quill, socket, fileId, dirType])
+    },[quill, socket, fileId, dirType, sharedUserOnFile])
 
 
     // WIP : Cursors socket
